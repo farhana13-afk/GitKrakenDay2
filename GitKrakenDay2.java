@@ -1,40 +1,46 @@
-public class GitKrakenDay2 implements Runnable
-{
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.*;
 
-    static long[] sumArray = new long[1000];
-    int count = 0;
+public class GitKrakenDay2 implements Callable<Long>
+{
+    static int size = 1000;
+    static ExecutorService executorService = Executors.newFixedThreadPool(size);
     public static void main(String[] args)
     {
-        Thread[] threadArray = new Thread[1000];
+        long currentTime = System.nanoTime();
 
-        for(int i=0; i< threadArray.length; i++)
+        Future<Long> future = executorService.submit(new GitKrakenDay2());
+
+        long total = 0;
+        for(int i=0; i<size; i++)
         {
-            threadArray[i] = new Thread(new GitKrakenDay2());
-            threadArray[i].start();
-            try {
-                threadArray[i].join();
+            try
+            {
+                total += future.get();
 
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | ExecutionException e)
+            {
                 throw new RuntimeException(e);
             }
         }
-        long total = 0;
-        for(int i=0; i<sumArray.length; i++)
-        {
-            total += sumArray[i];
-        }
+
+        long endTime = System.nanoTime();
         System.out.println("Total is: " + total);
+        System.out.println("Time passed: " + (endTime - currentTime) + " ns");
+        executorService.shutdown();
+
+
     }
 
     //checking up
     @Override
-    public void run() {
+    public Long call() {
         long sum =0;
-        for(int i=1; i<=1000000; i++)
+        for(int i=0; i<1000000; i++)
         {
-            sum += i;
+            sum ++;
         }
-        sumArray[count] = sum;
-        count++;
+        return sum;
     }
 }
