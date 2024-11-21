@@ -33,7 +33,6 @@ public class GitKrakenDay2 implements Callable<Long>
 
     }
 
-    //checking up
     @Override
     public Long call() {
         long sum =0;
